@@ -92,7 +92,15 @@ func TestFmap(t *testing.T) {
 		}
 	})
 
-	if fmt.Sprintf("%v", out) != "" {
-		t.Errorf("error")
+	if val, err := out.Get([]string{"foo"}); err != nil {
+		t.Errorf("error getting foo value")
+	} else {
+		switch val.(type) {
+		case float64:
+			if val.(float64) != 2 {
+				fmt.Println(val)
+				t.Errorf("error")
+			}
+		}
 	}
 }

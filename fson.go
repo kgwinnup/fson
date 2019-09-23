@@ -12,7 +12,7 @@ type Fson struct {
 }
 
 func (self *Fson) MarshalJSON() ([]byte, error) {
-	return []byte(self.String()), nil
+	return json.Marshal(self.data)
 }
 
 func (self *Fson) UnmarshalJSON(b []byte) error {
@@ -53,7 +53,7 @@ func (self *Fson) Loads(b []byte) error {
 func (self *Fson) toString(value interface{}) string {
 	switch v := value.(type) {
 	case string:
-		return "\"" + value.(string) + "\""
+		return "\"" + fmt.Sprintf("%s", value.(string)) + "\""
 	case bool:
 		return fmt.Sprintf("%v", value.(bool))
 	case []interface{}:

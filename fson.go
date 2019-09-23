@@ -1,18 +1,45 @@
 package fson
 
-import "fmt"
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type Fson struct {
 	data map[string]interface{}
 }
 
-func New() *Fson {
-	data := make(map[string]interface{})
-	return &Fson{data}
+func (self *Fson) MarshalJSON() ([]byte, error) {
+	return []byte(self.String()), nil
+}
+
+func (self *Fson) UnmarshalJSON(b []byte) error {
+	return self.Loads(b)
+}
+
+func (self *Fson) Scan(src interface{}) error {
+	return self.Loads(src.([]byte))
+}
+
+func (self *Fson) Jsonb() []byte {
+	return []byte(fmt.Sprintf("%v", self.data))
+}
+
+func New(b []byte) *Fson {
+	if b == nil {
+		return &Fson{}
+	} else {
+		f := &Fson{}
+		f.Loads(b)
+		return f
+	}
 }
 
 func (self *Fson) Loads(b []byte) error {
+	self.data = make(map[string]interface{})
+	if b == nil {
+		return nil
+	}
 	if err := json.Unmarshal(b, &self.data); err != nil {
 		return err
 	}
@@ -71,7 +98,7 @@ func (self Fson) String() string {
 	return ret
 }
 
-func (self *Fson) insert(path []string, value interface{}, cur map[string]interface{}, appendList bool) {
+func (self *Fson) set(path []string, value interface{}, cur map[string]interface{}, appendList bool) {
 	// check if we are where the insert should happen
 	if len(path) == 1 {
 		if appendList {
@@ -96,12 +123,12 @@ func (self *Fson) insert(path []string, value interface{}, cur map[string]interf
 		if _, ok := cur[path[0]]; !ok {
 			cur[path[0]] = make(map[string]interface{})
 		}
-		self.insert(path[1:], value, cur[path[0]].(map[string]interface{}), appendList)
+		self.set(path[1:], value, cur[path[0]].(map[string]interface{}), appendList)
 	}
 }
 
-func (self *Fson) Insert(path []string, value interface{}, appendList bool) {
-	self.insert(path, value, self.data, appendList)
+func (self *Fson) Set(path []string, value interface{}, appendList bool) {
+	self.set(path, value, self.data, appendList)
 }
 
 func (self *Fson) get(path []string, cur map[string]interface{}) interface{} {

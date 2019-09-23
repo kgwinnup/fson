@@ -1,16 +1,13 @@
 package fson
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 )
 
 func testDataTypeToString(t *testing.T, data []byte, expect string) {
-	out := New()
-	if err := out.Loads(data); err != nil {
-		t.Errorf("%v", err)
-	}
-
+	out := New(data)
 	if fmt.Sprintf("%v", out) != expect {
 		t.Errorf("Error dumping data type to string\nExpected: '%v'\nGot: '%v'\n", expect, out)
 	}
@@ -32,13 +29,9 @@ func TestString(t *testing.T) {
 
 }
 
-func TestInsertion(t *testing.T) {
+func TestSet(t *testing.T) {
 	data := []byte("{\"boo\": true, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\"}, \"baz\": [400,2,3]}")
-
-	out := New()
-	if err := out.Loads(data); err != nil {
-		t.Errorf("%v", err)
-	}
+	out := New(data)
 
 	if val, err := out.Get([]string{"boo"}); err != nil {
 		t.Errorf("Error retrieving bool value: %v", val)
@@ -48,7 +41,7 @@ func TestInsertion(t *testing.T) {
 		}
 	}
 
-	out.Insert([]string{"once", "twice", "third"}, 100, false)
+	out.Set([]string{"once", "twice", "third"}, 100, false)
 
 	if val, err := out.Get([]string{"once", "twice", "third"}); err != nil {
 		t.Errorf("error retrieving value")
@@ -58,7 +51,7 @@ func TestInsertion(t *testing.T) {
 		}
 	}
 
-	out.Insert([]string{"once", "twice", "third"}, 200, true)
+	out.Set([]string{"once", "twice", "third"}, 200, true)
 
 	if val, err := out.Get([]string{"once", "twice", "third"}); err != nil {
 		t.Errorf("error retreiving value")
@@ -77,11 +70,7 @@ func TestInsertion(t *testing.T) {
 
 func TestFmap(t *testing.T) {
 	data := []byte("{\"foo\": 1, \"foo2\": {\"bar\": 1, \"baz\": [1,1,1]}}")
-
-	out := New()
-	if err := out.Loads(data); err != nil {
-		t.Errorf("%v", err)
-	}
+	out := New(data)
 
 	out.Fmap(func(v interface{}) interface{} {
 		switch v.(type) {
@@ -98,7 +87,6 @@ func TestFmap(t *testing.T) {
 		switch val.(type) {
 		case float64:
 			if val.(float64) != 2 {
-				fmt.Println(val)
 				t.Errorf("error")
 			}
 		}
@@ -107,10 +95,7 @@ func TestFmap(t *testing.T) {
 
 func TestFmap2(t *testing.T) {
 	data := []byte("{\"foo\": 1, \"foo2\": {\"bar\": 1, \"baz\": {\"v\": 1, \"vv\": {\"vvv\": 1}}}}")
-	out := New()
-	if err := out.Loads(data); err != nil {
-		t.Errorf("%v", err)
-	}
+	out := New(data)
 
 	out.Fmap(func(v interface{}) interface{} {
 		switch v.(type) {
@@ -127,9 +112,17 @@ func TestFmap2(t *testing.T) {
 		switch val.(type) {
 		case float64:
 			if val.(float64) != 2 {
-				fmt.Println(val)
 				t.Errorf("error")
 			}
 		}
+	}
+}
+
+func TestJSONMarshal(t *testing.T) {
+	data := []byte("{\"foo\": 1, \"foo2\": {\"bar\": 1, \"baz\": {\"v\": 1, \"vv\": {\"vvv\": 1}}}}")
+	out := New(data)
+
+	if _, err := json.Marshal(out); err != nil {
+		t.Errorf("%v", err)
 	}
 }

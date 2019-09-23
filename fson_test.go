@@ -1,6 +1,7 @@
 package fson
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"testing"
@@ -118,11 +119,28 @@ func TestFmap2(t *testing.T) {
 	}
 }
 
-func TestJSONMarshal(t *testing.T) {
-	data := []byte("{\"foo\": 1, \"foo2\": {\"bar\": 1, \"baz\": {\"v\": 1, \"vv\": {\"vvv\": 1}}}}")
-	out := New(data)
+type TestStruct struct {
+	Name    string
+	ObjData int
+	ObjName string
+}
 
-	if _, err := json.Marshal(out); err != nil {
-		t.Errorf("%v", err)
+func TestJSONMarshal(t *testing.T) {
+	ts := TestStruct{"name", 10, "obj name"}
+	tsBytes := new(bytes.Buffer)
+	json.NewEncoder(tsBytes).Encode(ts)
+
+	out := New(tsBytes.Bytes())
+
+	if b, err := json.Marshal(out); err != nil {
+		t.Errorf("error marshaling json")
+	} else {
+		if b2, err := json.Marshal(ts); err != nil {
+			t.Errorf("error marshling test struct")
+		} else {
+			if len(b) != len(b2) {
+				t.Errorf("error matching marshals")
+			}
+		}
 	}
 }

@@ -104,3 +104,32 @@ func TestFmap(t *testing.T) {
 		}
 	}
 }
+
+func TestFmap2(t *testing.T) {
+	data := []byte("{\"foo\": 1, \"foo2\": {\"bar\": 1, \"baz\": [{\"v\": 1, \"vv\": {\"vvv\": 1}}]}}")
+	out := New()
+	if err := out.Loads(&data); err != nil {
+		t.Errorf("%v", err)
+	}
+
+	out.Fmap(func(v interface{}) interface{} {
+		switch v.(type) {
+		case float64:
+			return v.(float64) + 1
+		default:
+			return v.(int) + 1
+		}
+	})
+
+	if val, err := out.Get([]string{"foo2", "baz", "vv", "vvv"}); err != nil {
+		t.Errorf("error getting foo value")
+	} else {
+		switch val.(type) {
+		case float64:
+			if val.(float64) != 2 {
+				fmt.Println(val)
+				t.Errorf("error")
+			}
+		}
+	}
+}

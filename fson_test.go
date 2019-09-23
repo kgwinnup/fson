@@ -1,4 +1,4 @@
-package main
+package fson
 
 import (
 	"fmt"
@@ -106,7 +106,7 @@ func TestFmap(t *testing.T) {
 }
 
 func TestFmap2(t *testing.T) {
-	data := []byte("{\"foo\": 1, \"foo2\": {\"bar\": 1, \"baz\": [{\"v\": 1, \"vv\": {\"vvv\": 1}}]}}")
+	data := []byte("{\"foo\": 1, \"foo2\": {\"bar\": 1, \"baz\": {\"v\": 1, \"vv\": {\"vvv\": 1}}}}")
 	out := New()
 	if err := out.Loads(&data); err != nil {
 		t.Errorf("%v", err)

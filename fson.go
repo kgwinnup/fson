@@ -1,4 +1,4 @@
-package main
+package fson
 
 import "fmt"
 import "encoding/json"

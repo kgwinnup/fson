@@ -12,8 +12,8 @@ func New() *Fson {
 	return &Fson{data}
 }
 
-func (self *Fson) Loads(b *[]byte) error {
-	if err := json.Unmarshal(*b, &self.data); err != nil {
+func (self *Fson) Loads(b []byte) error {
+	if err := json.Unmarshal(b, &self.data); err != nil {
 		return err
 	}
 	return nil

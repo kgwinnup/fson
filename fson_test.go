@@ -7,7 +7,7 @@ import (
 
 func testDataTypeToString(t *testing.T, data []byte, expect string) {
 	out := New()
-	if err := out.Loads(&data); err != nil {
+	if err := out.Loads(data); err != nil {
 		t.Errorf("%v", err)
 	}
 
@@ -36,7 +36,7 @@ func TestInsertion(t *testing.T) {
 	data := []byte("{\"boo\": true, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\"}, \"baz\": [400,2,3]}")
 
 	out := New()
-	if err := out.Loads(&data); err != nil {
+	if err := out.Loads(data); err != nil {
 		t.Errorf("%v", err)
 	}
 
@@ -79,7 +79,7 @@ func TestFmap(t *testing.T) {
 	data := []byte("{\"foo\": 1, \"foo2\": {\"bar\": 1, \"baz\": [1,1,1]}}")
 
 	out := New()
-	if err := out.Loads(&data); err != nil {
+	if err := out.Loads(data); err != nil {
 		t.Errorf("%v", err)
 	}
 
@@ -108,7 +108,7 @@ func TestFmap(t *testing.T) {
 func TestFmap2(t *testing.T) {
 	data := []byte("{\"foo\": 1, \"foo2\": {\"bar\": 1, \"baz\": {\"v\": 1, \"vv\": {\"vvv\": 1}}}}")
 	out := New()
-	if err := out.Loads(&data); err != nil {
+	if err := out.Loads(data); err != nil {
 		t.Errorf("%v", err)
 	}
 

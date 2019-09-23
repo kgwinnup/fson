@@ -1,6 +1,12 @@
 
-# Basic Usage
+# Fson
 
+Fson is a simple library for working with arbitrary JSON data of unknown
+structure. Additionally, the JSON and Postgres's JSON(b) interface types are
+supported.
+
+
+# Basic Usage
 
 ```go
 import (
@@ -48,3 +54,5 @@ func main() {
 {"foo":2,"foo2":{"bar":2,"baz":[2,2,2]},"boo":true,"hello":"world","obj":{"foo":"bar"},"baz":[400,2,3],"new":{"field":"hello world"}}
 hello world
 ```
+
+

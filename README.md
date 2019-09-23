@@ -10,11 +10,7 @@ import (
 
 func main() {
 	data := []byte("{\"foo\": 1, \"foo2\": {\"bar\": 1, \"baz\": [1,1,1]}}")
-
-	fsonobj := New()
-	if err := fsonobj.Loads(&data); err != nil {
-		fmt.Println(err)
-	}
+	fsonobj := New(data)
 
 	fmt.Println(fsonobj)
 	fsonobj.Fmap(func(v interface{}) interface{} {

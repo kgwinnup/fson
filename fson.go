@@ -1,3 +1,5 @@
+// Fson packages provides a way to interact with arbitrary JSON fields as well as use JSON(b) within Postgresql
+// Fson supports the json interfaces MarshalJSON/UnmarshalJSON as well as the Scan interface within the db packages
 package fson
 
 import (
@@ -35,6 +37,8 @@ func New(b []byte) *Fson {
 	}
 }
 
+// Loads will take nil or a []byte array and create a Fson object with it.
+// Generally nil is used if you want to build your JSON object from scratch with the Set method
 func (self *Fson) Loads(b []byte) error {
 	self.data = make(map[string]interface{})
 	if b == nil {
@@ -82,6 +86,7 @@ func (self *Fson) toString(value interface{}) string {
 	}
 }
 
+// String will output the entire JSON structure as its string value
 func (self Fson) String() string {
 	ret := "{"
 	size := len(self.data)
@@ -127,6 +132,13 @@ func (self *Fson) set(path []string, value interface{}, cur map[string]interface
 	}
 }
 
+// Set will set a single key within the JSON structure. The key definition is
+// defined by a list of strings. Each item in the lest is the parent Object key
+// of the next. For example, if we have the json structure:
+// {"foo": {"bar": 10}}
+// and we want to add a 100 to the key "baz" in the "foo" object, call set with the following form
+// fsonobj := fson.New([]byte({\"foo\": {\"bar\": 10}}))
+// fsonobj.Set([]string{"foo", "baz"}, 100)
 func (self *Fson) Set(path []string, value interface{}, appendList bool) {
 	self.set(path, value, self.data, appendList)
 }
@@ -147,6 +159,8 @@ func (self *Fson) get(path []string, cur map[string]interface{}) interface{} {
 	}
 }
 
+// Get works like set in that the path to the key is specified as a list of
+// string values which represent the orderd nested object keys
 func (self *Fson) Get(path []string) (interface{}, error) {
 	if len(path) == 0 {
 		return nil, fmt.Errorf("No path specified")
@@ -181,6 +195,7 @@ func (self *Fson) fmap(f fmapFn, value interface{}) interface{} {
 	}
 }
 
+// Fmap applys a function to every value in the JSON structure, mutating them in place
 func (self *Fson) Fmap(f fmapFn) {
 	mp := make(map[string]interface{})
 	for k, v := range self.data {

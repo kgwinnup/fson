@@ -74,3 +74,25 @@ func TestInsertion(t *testing.T) {
 		}
 	}
 }
+
+func TestFmap(t *testing.T) {
+	data := []byte("{\"foo\": 1, \"foo2\": {\"bar\": 1, \"baz\": [1,1,1]}}")
+
+	out := New()
+	if err := out.Loads(&data); err != nil {
+		t.Errorf("%v", err)
+	}
+
+	out.Fmap(func(v interface{}) interface{} {
+		switch v.(type) {
+		case float64:
+			return v.(float64) + 1
+		default:
+			return v.(int) + 1
+		}
+	})
+
+	if fmt.Sprintf("%v", out) != "" {
+		t.Errorf("error")
+	}
+}

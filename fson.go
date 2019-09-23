@@ -132,6 +132,36 @@ func (self *Fson) Get(path []string) (interface{}, error) {
 	}
 }
 
+type fmapFn func(interface{}) interface{}
+
+func (self *Fson) fmap(f fmapFn, value interface{}) interface{} {
+	switch value.(type) {
+	case []interface{}:
+		lst := make([]interface{}, 0, 0)
+		for _, item := range value.([]interface{}) {
+			item = self.fmap(f, item)
+			lst = append(lst, item)
+		}
+		return lst
+	case map[string]interface{}:
+		mp := make(map[string]interface{})
+		for k, val := range value.(map[string]interface{}) {
+			mp[k] = self.fmap(f, val)
+		}
+		return mp
+	default:
+		return f(value)
+	}
+}
+
+func (self *Fson) Fmap(f fmapFn) {
+	mp := make(map[string]interface{})
+	for k, v := range self.data {
+		mp[k] = self.fmap(f, v)
+	}
+	self.data = mp
+}
+
 func main() {
 
 }

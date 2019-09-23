@@ -23,7 +23,7 @@ func (self *Fson) Scan(src interface{}) error {
 	return self.Loads(src.([]byte))
 }
 
-func (self *Fson) Jsonb() []byte {
+func (self *Fson) Bytes() []byte {
 	return []byte(fmt.Sprintf("%v", self.data))
 }
 

@@ -125,6 +125,20 @@ func (self *Fson) Get(path []string) (interface{}, error) {
 	}
 }
 
+func (self *Fson) GetArray(path []string) ([]interface{}, error) {
+	data, err := self.Get(path)
+	if err != nil {
+		return nil, err
+	}
+
+	switch data.(type) {
+	case []interface{}:
+		return data.([]interface{}), nil
+	}
+
+	return nil, fmt.Errorf("Data fetched is not a list")
+}
+
 type fmapFn func(interface{}) interface{}
 
 func (self *Fson) fmap(f fmapFn, value interface{}) interface{} {

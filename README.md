@@ -5,6 +5,11 @@ Fson is a simple library for working with arbitrary JSON data of unknown
 structure. Additionally, the JSON and Postgres's JSON(b) interface types are
 supported.
 
+### Features
+
+- Easy to use Getters and Setters
+- JSON Marshal interface
+- Postgresql JSON(b) Scan interface
 
 # Basic Usage
 

@@ -1,12 +1,8 @@
 
 ![fson logo](logo.png)
 
-# Fson
-
 [![Documentation](https://godoc.org/github.com/kgwinnup/fson?status.svg)](http://godoc.org/github.com/kgwinnup/fson)
 [![Go Report Card](https://goreportcard.com/badge/github.com/kgwinnup/fson)](https://goreportcard.com/report/github.com/kgwinnup/fson)
-
-
 
 Fson is a simple library for working with arbitrary JSON data of unknown
 structure. One of the key reasons for creating this were to add two critical

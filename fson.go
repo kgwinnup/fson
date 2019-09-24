@@ -1,4 +1,4 @@
-// Fson packages provides a way to interact with arbitrary JSON fields as well as use JSON(b) within Postgresql
+// Package fson provides a way to interact with arbitrary JSON fields as well as use JSON(b) within Postgresql
 // Fson supports the json interfaces MarshalJSON/UnmarshalJSON as well as the Scan interface within the db packages
 package fson
 
@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// Fson struct is the core structure, no exported members
 type Fson struct {
 	data map[string]interface{}
 }

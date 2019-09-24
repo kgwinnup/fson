@@ -99,6 +99,16 @@ func (self *Fson) Set(path []string, value interface{}, appendList bool) {
 	self.set(path, value, self.data, appendList)
 }
 
+// SetP is a helper method for providing a string path separated by forward slashes
+func (self *Fson) SetP(path string, value interface{}, appendList bool) {
+	self.Set(strings.Split(path, "/"), value, appendList)
+}
+
+// SetD is a helper method for providing a string path separated by forward slashes
+func (self *Fson) SetD(path string, value interface{}, appendList bool) {
+	self.Set(strings.Split(path, "."), value, appendList)
+}
+
 func (self *Fson) get(path []string, cur map[string]interface{}) interface{} {
 	if len(path) == 1 {
 		if _, ok := cur[path[0]]; ok {

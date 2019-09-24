@@ -23,7 +23,7 @@ import (
 )
 ```
 
-Basic example of interacting with a JSON structure
+## Basic example of interacting with a JSON structure
 
 ```go
 package main
@@ -78,3 +78,36 @@ func main() {
 }
 ```
 
+## Usage with Postgresql's JSON types
+
+For it to work with JSON types, the Scan interface is provided as well as a Bytes method. 
+
+```go
+import (
+	"fmt"
+	"github.com/kgwinnup/fson"
+    "database/sql"
+    _ "github.com/lib/pq"
+)
+
+type TableStruct struct {
+    ItemId int64
+    ItemDescription string
+    ItemData *fson.Fson
+}
+```
+
+To insert or update any JSON field, you must convert the value to a []byte array within the query.
+
+```go
+s := TableStruct{1, "description", fson.New([]byte{`{"foo": "bar"}`})}
+_, err := db.Query(`insert into table(itemdescription, itemdata) values($1, $2)`, s.ItemDescription, s.ItemData.Bytes())
+```
+
+Getting serialized into your structure is just using the `row.Scan` method as you normally would.
+
+```go
+var tbl TableStruct
+row := db.QueryRow(`select * from myTable where ItemId = 1;`)
+err := row.Scan(&tbl.ItemId, &tbl.ItemDescription, &tbl.ItemData)
+```

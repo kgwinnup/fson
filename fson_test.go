@@ -87,6 +87,17 @@ func TestGet(t *testing.T) {
 
 }
 
+func TestDel(t *testing.T) {
+	data := []byte("{\"boo\": true, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\", \"foo2\": \"bar2\"}, \"baz\": [400,2,3]}")
+	out := New(data)
+
+	out.Del([]string{"obj", "foo"})
+
+	if _, err := out.GetP("obj/foo"); err == nil {
+		t.Errorf("error deleting key")
+	}
+}
+
 func TestFmap(t *testing.T) {
 	data := []byte("{\"foo\": 1, \"foo2\": {\"bar\": 1, \"baz\": [1,1,1]}}")
 	out := New(data)

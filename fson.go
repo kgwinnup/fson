@@ -185,3 +185,54 @@ func (self *Fson) Fmap(f fmapFn) {
 	}
 	self.data = mp
 }
+
+func (self *Fson) del(path []string, cur interface{}) interface{} {
+	switch cur.(type) {
+	case map[string]interface{}:
+		mp := make(map[string]interface{})
+		if len(path) == 1 {
+			for key, val := range cur.(map[string]interface{}) {
+				if key != path[0] {
+					mp[key] = val
+				}
+			}
+		} else {
+			for key, val := range cur.(map[string]interface{}) {
+				mp[key] = self.del(path[1:], val)
+			}
+		}
+		return mp
+	default:
+		return cur
+	}
+}
+
+// Del will delete a key from the JSON object
+func (self *Fson) Del(path []string) {
+	mp := make(map[string]interface{})
+	for k, v := range self.data {
+		if len(path) == 1 {
+			if k != path[0] {
+				mp[k] = v
+			}
+		} else {
+			if k == path[0] {
+				mp[k] = self.del(path[1:], v)
+			} else {
+				mp[k] = v
+			}
+		}
+	}
+	self.data = mp
+
+}
+
+// DelP is a helper method for Del using forward slash as the path separator
+func (self *Fson) DelP(path string) {
+	self.Del(strings.Split(path, "/"))
+}
+
+// DelD is a helper method for Del using dot as the path separator
+func (self *Fson) DelD(path string) {
+	self.Del(strings.Split(path, "."))
+}

@@ -5,6 +5,7 @@ package fson
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 type Fson struct {
@@ -125,6 +126,18 @@ func (self *Fson) Get(path []string) (interface{}, error) {
 	} else {
 		return v, nil
 	}
+}
+
+// Simple helper method that wraps Get but provides a simpler syntax for making Get calls. Path keys are sperated by forward slashes ("rootkey/subkey/subkey")
+func (self *Fson) GetP(path string) (interface{}, error) {
+	newPath := strings.Split(path, "/")
+	return self.Get(newPath)
+}
+
+// Simple helper method that wraps Get but provides a simpler syntax for making Get calls. Path keys are sperated by forward slashes ("rootkey.subkey.subkey")
+func (self *Fson) GetD(path string) (interface{}, error) {
+	newPath := strings.Split(path, ".")
+	return self.Get(newPath)
 }
 
 func (self *Fson) GetArray(path []string) ([]interface{}, error) {

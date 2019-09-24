@@ -69,6 +69,24 @@ func TestSet(t *testing.T) {
 	}
 }
 
+func TestGet(t *testing.T) {
+	data := []byte("{\"boo\": true, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\"}, \"baz\": [400,2,3]}")
+	out := New(data)
+
+	if d, err := out.GetP("obj/foo"); err != nil {
+		t.Errorf("%v", err)
+	} else if d != "bar" {
+		t.Errorf("invalid key fetched with GetP")
+	}
+
+	if d, err := out.GetD("obj.foo"); err != nil {
+		t.Errorf("%v", err)
+	} else if d != "bar" {
+		t.Errorf("invalid key fetched with GetP")
+	}
+
+}
+
 func TestFmap(t *testing.T) {
 	data := []byte("{\"foo\": 1, \"foo2\": {\"bar\": 1, \"baz\": [1,1,1]}}")
 	out := New(data)

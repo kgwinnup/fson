@@ -10,11 +10,11 @@ import (
 
 // Fson struct is the core structure, no exported members
 type Fson struct {
-	data map[string]interface{}
+	Data map[string]interface{}
 }
 
 func (self *Fson) MarshalJSON() ([]byte, error) {
-	return json.Marshal(self.data)
+	return json.Marshal(self.Data)
 }
 
 func (self *Fson) UnmarshalJSON(b []byte) error {
@@ -26,7 +26,7 @@ func (self *Fson) Scan(src interface{}) error {
 }
 
 func (self Fson) Bytes() []byte {
-	if b, err := json.Marshal(self.data); err == nil {
+	if b, err := json.Marshal(self.Data); err == nil {
 		return b
 	}
 	return []byte{}
@@ -49,11 +49,11 @@ func New(b []byte) *Fson {
 // Loads will take nil or a []byte array and create a Fson object with it.
 // Generally nil is used if you want to build your JSON object from scratch with the Set method
 func (self *Fson) Loads(b []byte) error {
-	self.data = make(map[string]interface{})
+	self.Data = make(map[string]interface{})
 	if b == nil {
 		return nil
 	}
-	if err := json.Unmarshal(b, &self.data); err != nil {
+	if err := json.Unmarshal(b, &self.Data); err != nil {
 		return err
 	}
 	return nil
@@ -96,7 +96,7 @@ func (self *Fson) set(path []string, value interface{}, cur map[string]interface
 // with the new value being appended or b) a new list will be created with the
 // new value being at the head of the list
 func (self *Fson) Set(path []string, value interface{}, appendList bool) {
-	self.set(path, value, self.data, appendList)
+	self.set(path, value, self.Data, appendList)
 }
 
 // SetP is a helper method for providing a string path separated by forward slashes
@@ -132,11 +132,30 @@ func (self *Fson) Get(path []string) (interface{}, error) {
 		return nil, fmt.Errorf("No path specified")
 	}
 
-	if v := self.get(path, self.data); v == nil {
+	if v := self.get(path, self.Data); v == nil {
 		return nil, fmt.Errorf("path not found: %v", path)
 	} else {
 		return v, nil
 	}
+}
+
+// Exists will return true if the key exists in the JSON
+func (self *Fson) Exists(path []string) bool {
+	if _, err := self.Get(path); err != nil {
+		return false
+	}
+
+	return true
+}
+
+// ExistsP will return true if the path exists in the JSON. Path uses forward slash as separator
+func (self *Fson) ExistsP(path string) bool {
+	return self.Exists(strings.Split(path, "/"))
+}
+
+// ExistsD will return true if the path exists in the JSON. Path uses dot as separator
+func (self *Fson) ExistsD(path string) bool {
+	return self.Exists(strings.Split(path, "."))
 }
 
 // Simple helper method that wraps Get but provides a simpler syntax for making Get calls. Path keys are sperated by forward slashes ("rootkey/subkey/subkey")
@@ -195,12 +214,12 @@ func (self *Fson) filter(f FilterFn, value interface{}) interface{} {
 // Filter will filter out values from the JSON where the f "filterFn" returns false for that value
 func (self *Fson) Filter(f FilterFn) {
 	mp := make(map[string]interface{})
-	for k, v := range self.data {
+	for k, v := range self.Data {
 		if f(v) {
 			mp[k] = self.filter(f, v)
 		}
 	}
-	self.data = mp
+	self.Data = mp
 }
 
 // FmapFn will transform a value within the JSON into a new value, leaving the JSON structure alone
@@ -229,10 +248,10 @@ func (self *Fson) fmap(f FmapFn, value interface{}) interface{} {
 // Fmap applys a function to every value in the JSON structure, mutating them in place
 func (self *Fson) Fmap(f FmapFn) {
 	mp := make(map[string]interface{})
-	for k, v := range self.data {
+	for k, v := range self.Data {
 		mp[k] = self.fmap(f, v)
 	}
-	self.data = mp
+	self.Data = mp
 }
 
 func (self *Fson) del(path []string, cur interface{}) interface{} {
@@ -259,7 +278,7 @@ func (self *Fson) del(path []string, cur interface{}) interface{} {
 // Del will delete a key from the JSON object
 func (self *Fson) Del(path []string) {
 	mp := make(map[string]interface{})
-	for k, v := range self.data {
+	for k, v := range self.Data {
 		if len(path) == 1 {
 			if k != path[0] {
 				mp[k] = v
@@ -272,7 +291,7 @@ func (self *Fson) Del(path []string) {
 			}
 		}
 	}
-	self.data = mp
+	self.Data = mp
 
 }
 

@@ -36,7 +36,7 @@ func (self Fson) String() string {
 
 func New(b []byte) *Fson {
 	if b == nil {
-		return &Fson{}
+		return &Fson{make(map[string]interface{})}
 	} else {
 		f := &Fson{}
 		f.Loads(b)

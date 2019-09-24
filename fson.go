@@ -154,6 +154,17 @@ func (self *Fson) Get(path ...string) (interface{}, error) {
 	}
 }
 
+// Search will function the same as Get except instead of an (value, error)
+// tuple, the return value is a (value, bool) where the boolean value indicates
+// if the value exists in the JSON
+func (self *Fson) Search(path ...string) (interface{}, bool) {
+	if v, err := self.Get(path...); err != nil {
+		return nil, false
+	} else {
+		return v, true
+	}
+}
+
 // Exists will return true if the key exists in the JSON
 func (self *Fson) Exists(path ...string) bool {
 	if _, err := self.Get(path...); err != nil {

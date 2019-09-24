@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"strings"
 )
 
 // Fson struct is the core structure, no exported members
@@ -287,14 +286,4 @@ func (self *Fson) Del(path []string) {
 	}
 	self.Data = mp
 
-}
-
-// DelP is a helper method for Del using forward slash as the path separator
-func (self *Fson) DelP(path string) {
-	self.Del(strings.Split(path, "/"))
-}
-
-// DelD is a helper method for Del using dot as the path separator
-func (self *Fson) DelD(path string) {
-	self.Del(strings.Split(path, "."))
 }

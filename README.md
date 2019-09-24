@@ -61,21 +61,14 @@ func main() {
 		fmt.Println(fsonobj)
 	}
 
-	// -------------------------------------------------------------------------------
-	// -------------------------------------------------------------------------------
-
-	// lets incremenet all number values by 1
-	fsonobj.Fmap(func(v interface{}) interface{} {
-		switch v.(type) {
-		case float64:
-			return v.(float64) + 1
-		default:
-			return v
-		}
-	})
-	fmt.Println(fsonobj)
-
 }
+```
+
+Output:
+
+```
+{"foo":1,"foo2":{"bar":1,"baz":[1,1,1]}}
+{"foo":1,"foo2":{"bar":101,"baz":[1,1,1]}}
 ```
 
 ## Using generic "functional" functions

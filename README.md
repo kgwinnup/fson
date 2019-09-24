@@ -1,17 +1,26 @@
 
 # Fson
 
+[![godoc for kgwinnup/fson][godoc-badge]][godoc-url]
+
 Fson is a simple library for working with arbitrary JSON data of unknown
-structure. Additionally, the JSON and Postgres's JSON(b) interface types are
-supported.
+structure. One of the key reasons for creating this were to add two critical
+features for my use cases. First was an Fmap function for easily applying a
+function to the JSON data structure and secondly, provide a interface type for
+dealing with Postgresql's JSON(b) types and that types encoding to JSON for our
+REST api.
 
-### Features
+# Usage
 
-- Easy to use Getters and Setters
-- JSON Marshal interface
-- Postgresql JSON(b) Scan interface
+Import package
 
-# Basic Usage
+```go
+import (
+	"github.com/kgwinnup/fson"
+)
+```
+
+Basic example of interacting with a JSON structure
 
 ```go
 package main
@@ -23,7 +32,13 @@ import (
 
 func main() {
 	//receive some byte array and create an Fson object
-	data := []byte("{\"foo\": 1, \"foo2\": {\"bar\": 1, \"baz\": [1,1,1]}}")
+	data := []byte(`{
+        "foo": 1, 
+        "foo2": { 
+                    "bar": 1, 
+                    "baz": [1,1,1]
+                }
+        }`)
 	fsonobj := fson.New(data)
 
 	// print the JSON string

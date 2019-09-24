@@ -142,23 +142,12 @@ func (self *Fson) get(path []string, cur map[string]interface{}) interface{} {
 
 // Get works like set in that the path to the key is specified as a list of
 // string values which represent the orderd nested object keys
-func (self *Fson) Get(path ...string) (interface{}, error) {
+func (self *Fson) Get(path ...string) (interface{}, bool) {
 	if len(path) == 0 {
-		return nil, fmt.Errorf("No path specified")
+		return nil, false
 	}
 
 	if v := self.get(path, self.Data); v == nil {
-		return nil, fmt.Errorf("path not found: %v", path)
-	} else {
-		return v, nil
-	}
-}
-
-// Search will function the same as Get except instead of an (value, error)
-// tuple, the return value is a (value, bool) where the boolean value indicates
-// if the value exists in the JSON
-func (self *Fson) Search(path ...string) (interface{}, bool) {
-	if v, err := self.Get(path...); err != nil {
 		return nil, false
 	} else {
 		return v, true
@@ -167,17 +156,14 @@ func (self *Fson) Search(path ...string) (interface{}, bool) {
 
 // Exists will return true if the key exists in the JSON
 func (self *Fson) Exists(path ...string) bool {
-	if _, err := self.Get(path...); err != nil {
-		return false
-	}
-
-	return true
+	_, ok := self.Get(path...)
+	return ok
 }
 
 func (self *Fson) GetArray(path ...string) ([]interface{}, error) {
-	data, err := self.Get(path...)
-	if err != nil {
-		return nil, err
+	data, ok := self.Get(path...)
+	if !ok {
+		return nil, fmt.Errorf("key does not exist")
 	}
 
 	switch data.(type) {

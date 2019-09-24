@@ -34,7 +34,7 @@ func TestSet(t *testing.T) {
 	data := []byte("{\"boo\": true, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\"}, \"baz\": [400,2,3]}")
 	out := New(data)
 
-	if val, err := out.Get("boo"); err != nil {
+	if val, ok := out.Get("boo"); !ok {
 		t.Errorf("Error retrieving bool value: %v", val)
 	} else {
 		if val.(bool) != true {
@@ -44,7 +44,7 @@ func TestSet(t *testing.T) {
 
 	out.Set(100, "once", "twice", "third")
 
-	if val, err := out.Get("once", "twice", "third"); err != nil {
+	if val, ok := out.Get("once", "twice", "third"); !ok {
 		t.Errorf("error retrieving value")
 	} else {
 		if val != 100 {
@@ -54,7 +54,7 @@ func TestSet(t *testing.T) {
 
 	out.SetA(200, "once", "twice", "third")
 
-	if val, err := out.Get("once", "twice", "third"); err != nil {
+	if val, ok := out.Get("once", "twice", "third"); !ok {
 		t.Errorf("error retreiving value")
 	} else {
 		switch val.(type) {
@@ -73,14 +73,14 @@ func TestGet(t *testing.T) {
 	data := []byte("{\"boo\": true, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\"}, \"baz\": [400,2,3]}")
 	out := New(data)
 
-	if d, err := out.Get("obj", "foo"); err != nil {
-		t.Errorf("%v", err)
+	if d, ok := out.Get("obj", "foo"); !ok {
+		t.Errorf("error getting value")
 	} else if d != "bar" {
 		t.Errorf("invalid key fetched with GetP")
 	}
 
-	if d, err := out.Get("obj", "foo"); err != nil {
-		t.Errorf("%v", err)
+	if d, ok := out.Get("obj", "foo"); !ok {
+		t.Errorf("error getting value")
 	} else if d != "bar" {
 		t.Errorf("invalid key fetched with GetP")
 	}
@@ -93,7 +93,7 @@ func TestDel(t *testing.T) {
 
 	out.Del([]string{"obj", "foo"})
 
-	if _, err := out.Get("obj", "foo"); err == nil {
+	if _, ok := out.Get("obj", "foo"); ok {
 		t.Errorf("error deleting key")
 	}
 }
@@ -117,7 +117,7 @@ func TestFmap(t *testing.T) {
 		}
 	})
 
-	if val, err := out.Get("foo"); err != nil {
+	if val, ok := out.Get("foo"); !ok {
 		t.Errorf("error getting foo value")
 	} else {
 		switch val.(type) {
@@ -152,8 +152,8 @@ func TestFilter(t *testing.T) {
 		}
 	})
 
-	if d, err := out.Get("foo2", "baz"); err != nil {
-		t.Errorf("%v", err)
+	if d, ok := out.Get("foo2", "baz"); !ok {
+		t.Errorf("error getting value")
 	} else if len(d.([]interface{})) != 2 {
 		t.Errorf("Filter did not reduce the list values")
 	}
@@ -172,7 +172,7 @@ func TestFmap2(t *testing.T) {
 		return v
 	})
 
-	if val, err := out.Get("foo2", "baz", "vv", "vvv"); err != nil {
+	if val, ok := out.Get("foo2", "baz", "vv", "vvv"); !ok {
 		t.Errorf("error getting foo value")
 	} else {
 		switch val.(type) {
@@ -191,7 +191,7 @@ func TestFmap2(t *testing.T) {
 		return v
 	})
 
-	if val, err := out.Get("foo2", "baz", "vv", "vvv"); err != nil {
+	if val, ok := out.Get("foo2", "baz", "vv", "vvv"); !ok {
 		t.Errorf("error getting foo value")
 	} else {
 		switch val.(type) {

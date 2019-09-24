@@ -48,7 +48,7 @@ func main() {
 	fmt.Println(fsonobj)
 
 	// Get a value from the JSON
-	if val, err := fsonobj.Get([]string{"foo2", "bar"}); err != nil {
+	if val, err := fsonobj.Get("foo2", "bar"); err != nil {
 		fmt.Println(err)
 	} else {
 
@@ -57,7 +57,7 @@ func main() {
 
 		//set the new value back in the JSON structure
 		// the last bool parameter, if true, will turn the value in the key to an array
-		fsonobj.Set([]string{"foo2", "bar"}, newVal, false)
+		fsonobj.Set(newVal, "foo2", "bar")
 		fmt.Println(fsonobj)
 	}
 

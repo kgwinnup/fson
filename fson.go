@@ -112,25 +112,17 @@ func (self *Fson) set(path []string, value interface{}, cur map[string]interface
 	}
 }
 
-// Set will set a single key within the JSON structure. The key definition is
-// defined by a list of strings. Each item in the lest is the parent Object key
-// of the next.
-// The appendList parameter will either a) create a new list and if there is a
-// non list value currently there that value will be the head of a new list
-// with the new value being appended or b) a new list will be created with the
-// new value being at the head of the list
-func (self *Fson) Set(path []string, value interface{}, appendList bool) {
-	self.set(path, value, self.Data, appendList)
+// Set will set a value to a specified path. The path is defined as a variadic
+// parameter. This will overwrite any value that is located at the provided key
+func (self *Fson) Set(value interface{}, path ...string) {
+	self.set(path, value, self.Data, false)
 }
 
-// SetP is a helper method for providing a string path separated by forward slashes
-func (self *Fson) SetP(path string, value interface{}, appendList bool) {
-	self.Set(strings.Split(path, "/"), value, appendList)
-}
-
-// SetD is a helper method for providing a string path separated by forward slashes
-func (self *Fson) SetD(path string, value interface{}, appendList bool) {
-	self.Set(strings.Split(path, "."), value, appendList)
+// SetA is the same as set except that it will append to a list. If no list
+// exists, it will create a list. If an element currently exists, a new list
+// will be created with the existing element as the head of the list.
+func (self *Fson) SetA(value interface{}, path ...string) {
+	self.set(path, value, self.Data, true)
 }
 
 func (self *Fson) get(path []string, cur map[string]interface{}) interface{} {
@@ -151,7 +143,7 @@ func (self *Fson) get(path []string, cur map[string]interface{}) interface{} {
 
 // Get works like set in that the path to the key is specified as a list of
 // string values which represent the orderd nested object keys
-func (self *Fson) Get(path []string) (interface{}, error) {
+func (self *Fson) Get(path ...string) (interface{}, error) {
 	if len(path) == 0 {
 		return nil, fmt.Errorf("No path specified")
 	}
@@ -164,38 +156,16 @@ func (self *Fson) Get(path []string) (interface{}, error) {
 }
 
 // Exists will return true if the key exists in the JSON
-func (self *Fson) Exists(path []string) bool {
-	if _, err := self.Get(path); err != nil {
+func (self *Fson) Exists(path ...string) bool {
+	if _, err := self.Get(path...); err != nil {
 		return false
 	}
 
 	return true
 }
 
-// ExistsP will return true if the path exists in the JSON. Path uses forward slash as separator
-func (self *Fson) ExistsP(path string) bool {
-	return self.Exists(strings.Split(path, "/"))
-}
-
-// ExistsD will return true if the path exists in the JSON. Path uses dot as separator
-func (self *Fson) ExistsD(path string) bool {
-	return self.Exists(strings.Split(path, "."))
-}
-
-// Simple helper method that wraps Get but provides a simpler syntax for making Get calls. Path keys are sperated by forward slashes ("rootkey/subkey/subkey")
-func (self *Fson) GetP(path string) (interface{}, error) {
-	newPath := strings.Split(path, "/")
-	return self.Get(newPath)
-}
-
-// Simple helper method that wraps Get but provides a simpler syntax for making Get calls. Path keys are sperated by forward slashes ("rootkey.subkey.subkey")
-func (self *Fson) GetD(path string) (interface{}, error) {
-	newPath := strings.Split(path, ".")
-	return self.Get(newPath)
-}
-
-func (self *Fson) GetArray(path []string) ([]interface{}, error) {
-	data, err := self.Get(path)
+func (self *Fson) GetArray(path ...string) ([]interface{}, error) {
+	data, err := self.Get(path...)
 	if err != nil {
 		return nil, err
 	}

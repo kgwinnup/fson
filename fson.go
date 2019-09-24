@@ -90,11 +90,11 @@ func (self *Fson) set(path []string, value interface{}, cur map[string]interface
 
 // Set will set a single key within the JSON structure. The key definition is
 // defined by a list of strings. Each item in the lest is the parent Object key
-// of the next. For example, if we have the json structure:
-// {"foo": {"bar": 10}}
-// and we want to add a 100 to the key "baz" in the "foo" object, call set with the following form
-// fsonobj := fson.New([]byte({\"foo\": {\"bar\": 10}}))
-// fsonobj.Set([]string{"foo", "baz"}, 100)
+// of the next.
+// The appendList parameter will either a) create a new list and if there is a
+// non list value currently there that value will be the head of a new list
+// with the new value being appended or b) a new list will be created with the
+// new value being at the head of the list
 func (self *Fson) Set(path []string, value interface{}, appendList bool) {
 	self.set(path, value, self.data, appendList)
 }

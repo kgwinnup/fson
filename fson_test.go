@@ -102,9 +102,8 @@ func TestFmap2(t *testing.T) {
 		switch v.(type) {
 		case float64:
 			return v.(float64) + 1
-		default:
-			return v.(int) + 1
 		}
+		return v
 	})
 
 	if val, err := out.Get([]string{"foo2", "baz", "vv", "vvv"}); err != nil {
@@ -117,6 +116,26 @@ func TestFmap2(t *testing.T) {
 			}
 		}
 	}
+
+	out.Fmap(func(v interface{}) interface{} {
+		switch v.(type) {
+		case float64:
+			return fmt.Sprintf("%v", v.(float64))
+		}
+		return v
+	})
+
+	if val, err := out.Get([]string{"foo2", "baz", "vv", "vvv"}); err != nil {
+		t.Errorf("error getting foo value")
+	} else {
+		switch val.(type) {
+		case string:
+			if val.(string) != "2" {
+				t.Errorf("error")
+			}
+		}
+	}
+
 }
 
 type TestStruct struct {

@@ -1,4 +1,6 @@
 
+![fson logo](logo.png)
+
 # Fson
 
 [![Documentation](https://godoc.org/github.com/kgwinnup/fson?status.svg)](http://godoc.org/github.com/kgwinnup/fson)

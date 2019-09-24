@@ -99,7 +99,13 @@ func TestDel(t *testing.T) {
 }
 
 func TestFmap(t *testing.T) {
-	data := []byte("{\"foo\": 1, \"foo2\": {\"bar\": 1, \"baz\": [1,1,1]}}")
+	data := []byte(`{
+		"foo": 1, 
+		"foo2": {
+			"bar": 1, 
+			"baz": [1,1,1]
+			}
+		}`)
 	out := New(data)
 
 	out.Fmap(func(v interface{}) interface{} {
@@ -121,6 +127,37 @@ func TestFmap(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestFilter(t *testing.T) {
+	data := []byte(`{
+		"foo": 2, 
+		"foo2": {
+			"bar": 1, 
+			"baz": [2,1,1]
+			}
+		}`)
+	out := New(data)
+
+	out.Filter(func(v interface{}) bool {
+		switch v.(type) {
+		case float64:
+			if v.(float64) > 1 {
+				return false
+			} else {
+				return true
+			}
+		default:
+			return true
+		}
+	})
+
+	if d, err := out.GetD("foo2.baz"); err != nil {
+		t.Errorf("%v", err)
+	} else if len(d.([]interface{})) != 2 {
+		t.Errorf("Filter did not reduce the list values")
+	}
+
 }
 
 func TestFmap2(t *testing.T) {

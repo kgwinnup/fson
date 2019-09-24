@@ -78,6 +78,85 @@ func main() {
 }
 ```
 
+## Using generic "functional" functions
+
+### Fmap
+
+Fmap will apply a function to every value in the JSON while leaving the
+underlying JSON structure unchanged. Only the values are mutated, mutation is
+in place.
+
+```go
+import (
+	"fmt"
+	"github.com/kgwinnup/fson"
+)
+
+func main() {
+    data := []byte(`{
+		"foo": 1, 
+		"foo2": {
+			"bar": 1, 
+			"baz": [1,1,1]
+			}
+		}`)
+	out := New(data)
+
+	out.Fmap(func(v interface{}) interface{} {
+		switch v.(type) {
+		case float64:
+			return v.(float64) + 1
+		default:
+			return v.(int) + 1
+		}
+	})
+
+	fmt.Println(out)
+}
+```
+
+Output `{"foo":2,"foo2":{"bar":2,"baz":[2,2,2]}}`
+
+### Filter
+
+Filter will remove values that do not match the `FilterFn`. This function will
+change the underlying JSON structure.
+
+```go
+import (
+	"fmt"
+	"github.com/kgwinnup/fson"
+)
+
+func main() {
+    data := []byte(`{
+		"foo": 2, 
+		"foo2": {
+			"bar": 1, 
+			"baz": [2,1,1]
+			}
+		}`)
+	out := New(data)
+
+	out.Filter(func(v interface{}) bool {
+		switch v.(type) {
+		case float64:
+			if v.(float64) > 1 {
+				return false
+			} else {
+				return true
+			}
+		default:
+			return true
+		}
+	})
+
+	fmt.Println(out)
+}
+```
+
+Output `{"foo2":{"bar":1,"baz":[1,1]}}`
+
 ## Usage with Postgresql's JSON types
 
 For it to work with JSON types, the Scan interface is provided as well as a Bytes method. 

@@ -165,9 +165,48 @@ func (self *Fson) GetArray(path []string) ([]interface{}, error) {
 	return nil, fmt.Errorf("Data fetched is not a list")
 }
 
-type fmapFn func(interface{}) interface{}
+// FilterFn is the interface returning a boolean value of whether to include
+// this value. This will change the JSON structure
+type FilterFn func(interface{}) bool
 
-func (self *Fson) fmap(f fmapFn, value interface{}) interface{} {
+func (self *Fson) filter(f FilterFn, value interface{}) interface{} {
+	switch value.(type) {
+	case []interface{}:
+		lst := make([]interface{}, 0, 0)
+		for _, item := range value.([]interface{}) {
+			if f(item) {
+				lst = append(lst, item)
+			}
+		}
+		return lst
+	case map[string]interface{}:
+		mp := make(map[string]interface{})
+		for k, val := range value.(map[string]interface{}) {
+			if f(val) {
+				mp[k] = self.filter(f, val)
+			}
+		}
+		return mp
+	default:
+		return value
+	}
+}
+
+// Filter will filter out values from the JSON where the f "filterFn" returns false for that value
+func (self *Fson) Filter(f FilterFn) {
+	mp := make(map[string]interface{})
+	for k, v := range self.data {
+		if f(v) {
+			mp[k] = self.filter(f, v)
+		}
+	}
+	self.data = mp
+}
+
+// FmapFn will transform a value within the JSON into a new value, leaving the JSON structure alone
+type FmapFn func(interface{}) interface{}
+
+func (self *Fson) fmap(f FmapFn, value interface{}) interface{} {
 	switch value.(type) {
 	case []interface{}:
 		lst := make([]interface{}, 0, 0)
@@ -188,7 +227,7 @@ func (self *Fson) fmap(f fmapFn, value interface{}) interface{} {
 }
 
 // Fmap applys a function to every value in the JSON structure, mutating them in place
-func (self *Fson) Fmap(f fmapFn) {
+func (self *Fson) Fmap(f FmapFn) {
 	mp := make(map[string]interface{})
 	for k, v := range self.data {
 		mp[k] = self.fmap(f, v)

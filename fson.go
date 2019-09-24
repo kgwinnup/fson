@@ -23,13 +23,15 @@ func (self *Fson) Scan(src interface{}) error {
 	return self.Loads(src.([]byte))
 }
 
-func (self *Fson) Bytes() []byte {
-	b, _ := json.Marshal(self.data)
-	return b
+func (self Fson) Value() []byte {
+	if b, err := json.Marshal(self.data); err == nil {
+		return b
+	}
+	return []byte{}
 }
 
-func (self *Fson) String() string {
-	return string(self.Bytes())
+func (self Fson) String() string {
+	return string(self.Value())
 }
 
 func New(b []byte) *Fson {

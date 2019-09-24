@@ -46,10 +46,7 @@ func main() {
 	fmt.Println(fsonobj)
 
 	// Get a value from the JSON
-	if val, err := fsonobj.Get("foo2", "bar"); err != nil {
-		fmt.Println(err)
-	} else {
-
+	if val, ok := fsonobj.Get("foo2", "bar"); ok {
 		//add 100 to our new value
 		newVal := val.(float64) + 100
 

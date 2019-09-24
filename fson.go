@@ -5,6 +5,7 @@ package fson
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"strings"
 )
 
@@ -41,13 +42,14 @@ func New(b []byte) *Fson {
 		return &Fson{make(map[string]interface{})}
 	} else {
 		f := &Fson{}
-		f.Loads(b)
+		json.Unmarshal(b, &f.Data)
 		return f
 	}
 }
 
 // Loads will take nil or a []byte array and create a Fson object with it.
 // Generally nil is used if you want to build your JSON object from scratch with the Set method
+// This will overwrite any current data that is in the Fson object
 func (self *Fson) Loads(b []byte) error {
 	self.Data = make(map[string]interface{})
 	if b == nil {
@@ -57,6 +59,28 @@ func (self *Fson) Loads(b []byte) error {
 		return err
 	}
 	return nil
+}
+
+// FromFile will load a JSON object from a file
+func FromFile(path string) (*Fson, error) {
+	if data, err := ioutil.ReadFile("/tmp/dat"); err != nil {
+		return New(data), nil
+	} else {
+		return nil, err
+	}
+}
+
+// ParseJSON takes some bytes and parses it into an Fson object
+func ParseJSON(b []byte) (*Fson, error) {
+	if b == nil {
+		return nil, fmt.Errorf("no bytes provided to parse as JSON")
+	} else {
+		f := &Fson{}
+		if err := json.Unmarshal(b, &f.Data); err != nil {
+			return nil, err
+		}
+		return f, nil
+	}
 }
 
 func (self *Fson) set(path []string, value interface{}, cur map[string]interface{}, appendList bool) {

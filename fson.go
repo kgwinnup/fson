@@ -24,7 +24,12 @@ func (self *Fson) Scan(src interface{}) error {
 }
 
 func (self *Fson) Bytes() []byte {
-	return []byte(fmt.Sprintf("%v", self.data))
+	b, _ := json.Marshal(self.data)
+	return b
+}
+
+func (self *Fson) String() string {
+	return string(self.Bytes())
 }
 
 func New(b []byte) *Fson {
@@ -48,59 +53,6 @@ func (self *Fson) Loads(b []byte) error {
 		return err
 	}
 	return nil
-}
-
-func (self *Fson) toString(value interface{}) string {
-	switch v := value.(type) {
-	case string:
-		return "\"" + fmt.Sprintf("%s", value.(string)) + "\""
-	case bool:
-		return fmt.Sprintf("%v", value.(bool))
-	case []interface{}:
-		ret := "["
-		for i, item := range value.([]interface{}) {
-			ret += self.toString(item)
-			if i < len(value.([]interface{}))-1 {
-				ret += ","
-			}
-		}
-		ret += "]"
-		return ret
-	case map[string]interface{}:
-		ret := "{"
-		size := len(value.(map[string]interface{}))
-		count := 0
-		for k, v := range value.(map[string]interface{}) {
-			ret += "\"" + k + "\""
-			ret += ":"
-			ret += self.toString(v)
-			if count < size-1 {
-				ret += ","
-			}
-			count += 1
-		}
-		ret += "}"
-		return ret
-	default:
-		return fmt.Sprintf("%v", v)
-	}
-}
-
-// String will output the entire JSON structure as its string value
-func (self Fson) String() string {
-	ret := "{"
-	size := len(self.data)
-	count := 0
-	for k, v := range self.data {
-		ret += "\"" + k + "\":"
-		ret += self.toString(v)
-		if count < size-1 {
-			ret += ","
-		}
-		count += 1
-	}
-	ret += "}"
-	return ret
 }
 
 func (self *Fson) set(path []string, value interface{}, cur map[string]interface{}, appendList bool) {

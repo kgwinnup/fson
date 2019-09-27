@@ -88,7 +88,7 @@ func main() {
 			"baz": [1,1,1]
 			}
 		}`)
-	out := New(data)
+	out := fson.New(data)
 
 	out.Fmap(func(v interface{}) interface{} {
 		switch v.(type) {
@@ -124,7 +124,7 @@ func main() {
 			"baz": [2,1,1]
 			}
 		}`)
-	out := New(data)
+	out := fson.New(data)
 
 	out.Filter(func(v interface{}) bool {
 		switch v.(type) {

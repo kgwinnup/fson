@@ -3,6 +3,7 @@
 package fson
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -311,4 +312,11 @@ func (self *Fson) Merge(obj *Fson) {
 			self.Data[k] = v
 		}
 	}
+}
+
+// Pretty returns a prety printed string of the underlying JSON
+func (self *Fson) Pretty() string {
+	var out bytes.Buffer
+	json.Indent(&out, self.Bytes(), "", "    ")
+	return out.String()
 }

@@ -284,3 +284,31 @@ func (self *Fson) Del(path []string) {
 	self.Data = mp
 
 }
+
+func (self *Fson) merge(path []string, obj interface{}) {
+	switch obj.(type) {
+	case map[string]interface{}:
+		for k, v := range obj.(map[string]interface{}) {
+			newpath := append(path, k)
+			if _, ok := self.Get(newpath...); ok {
+				self.merge(newpath, v)
+			} else {
+				self.Set(v, newpath...)
+			}
+		}
+	default:
+		self.Set(obj, path...)
+	}
+}
+
+// Merge will take two an Fson object and merge it with an existing Fson
+// object. The new object will overwrite any matching key values
+func (self *Fson) Merge(obj *Fson) {
+	for k, v := range obj.Data {
+		if _, ok := self.Data[k]; ok {
+			self.merge([]string{k}, v)
+		} else {
+			self.Data[k] = v
+		}
+	}
+}

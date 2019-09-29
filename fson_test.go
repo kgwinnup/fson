@@ -229,3 +229,95 @@ func TestJSONMarshal(t *testing.T) {
 		}
 	}
 }
+
+func TestMerge(t *testing.T) {
+	data := []byte(`{
+		"foo": 1, 
+		"foo2": {
+			"bar": 1, 
+			"baz": [1,1,1]
+			}
+		}`)
+	data2 := []byte(`{
+		"boo": 1, 
+		"foo2": {
+			"bar": 1, 
+			"faz": "blah"
+			}
+		}`)
+
+	out := New(data)
+
+	out.Merge(New(data2))
+
+	if val, ok := out.Get("boo"); !ok {
+		t.Errorf("error getting foo value")
+	} else {
+		switch val.(type) {
+		case float64:
+			if val.(float64) != 1 {
+				t.Errorf("error")
+			}
+		}
+	}
+
+	if val, ok := out.Get("foo2", "faz"); !ok {
+		t.Errorf("error getting foo2/faz value")
+	} else {
+		switch val.(type) {
+		case string:
+			if val.(string) != "blah" {
+				t.Errorf("error")
+			}
+		}
+	}
+
+}
+
+func TestMerge2(t *testing.T) {
+	data := []byte(`{
+		"foo": 1, 
+		"foo2": {
+			"bar": 1, 
+			"faz": [1,1,1]
+			}
+		}`)
+	data2 := []byte(`{
+		"boo": 1, 
+		"foo2": {
+			"bar": 1, 
+			"faz": "blah"
+			}
+		}`)
+
+	out := New(data)
+
+	out.Merge(New(data2))
+
+	if val, ok := out.Get("boo"); !ok {
+		t.Errorf("error getting foo value")
+	} else {
+		switch val.(type) {
+		case float64:
+			if val.(float64) != 1 {
+				t.Errorf("error")
+			}
+		default:
+			t.Errorf("wat")
+		}
+	}
+
+	if val, ok := out.Get("foo2", "faz"); !ok {
+		t.Errorf("error getting foo2/faz value")
+	} else {
+		switch val.(type) {
+		case string:
+			if val.(string) != "blah" {
+				t.Errorf("error")
+			}
+		default:
+			t.Errorf("wat")
+		}
+	}
+
+}

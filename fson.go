@@ -155,7 +155,7 @@ func (self *Fson) Get(path ...string) (interface{}, bool) {
 	}
 }
 
-// GetF will work the same as Get except this will automatically encode the
+// GetObject will work the same as Get except this will automatically encode the
 // result into an Fson object. If the value retrieved is not a JSON object,
 // this will return nil, false
 func (self *Fson) GetObject(path ...string) (*Fson, bool) {

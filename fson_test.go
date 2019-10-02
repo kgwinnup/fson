@@ -32,7 +32,7 @@ func TestGetF(t *testing.T) {
 	data := []byte("{\"boo\": true, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\"}, \"baz\": [400,2,3]}")
 	out := New(data)
 
-	if obj, ok := out.GetF("obj"); !ok {
+	if obj, ok := out.GetObject("obj"); !ok {
 		t.Errorf("error retrieving object with GetF")
 	} else {
 		if _, ok := obj.Get("foo"); !ok {

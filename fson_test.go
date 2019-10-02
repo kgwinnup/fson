@@ -15,7 +15,6 @@ func testDataTypeToString(t *testing.T, data []byte, expect string) {
 }
 
 func TestString(t *testing.T) {
-
 	data0 := []byte("{\"boo\":\"baz\"}")
 	data1 := []byte("{\"boo\":10}")
 	data2 := []byte("{\"boo\":true}")
@@ -27,7 +26,19 @@ func TestString(t *testing.T) {
 	testDataTypeToString(t, data2, "{\"boo\":true}")
 	testDataTypeToString(t, data3, "{\"boo\":[false]}")
 	testDataTypeToString(t, data4, "{\"boo\":{\"baz\":false}}")
+}
 
+func TestGetF(t *testing.T) {
+	data := []byte("{\"boo\": true, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\"}, \"baz\": [400,2,3]}")
+	out := New(data)
+
+	if obj, ok := out.GetF("obj"); !ok {
+		t.Errorf("error retrieving object with GetF")
+	} else {
+		if _, ok := obj.Get("foo"); !ok {
+			t.Errorf("error getting value from Fson object returned by GetF")
+		}
+	}
 }
 
 func TestSet(t *testing.T) {

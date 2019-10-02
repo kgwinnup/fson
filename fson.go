@@ -155,6 +155,25 @@ func (self *Fson) Get(path ...string) (interface{}, bool) {
 	}
 }
 
+// GetF will work the same as Get except this will automatically encode the
+// result into an Fson object. If the value retrieved is not a JSON object,
+// this will return nil, false
+func (self *Fson) GetF(path ...string) (*Fson, bool) {
+	if len(path) == 0 {
+		return nil, false
+	}
+
+	if v := self.get(path, self.Data); v == nil {
+		return nil, false
+	} else {
+		if b, err := json.Marshal(v); err != nil {
+			return nil, false
+		} else {
+			return New(b), true
+		}
+	}
+}
+
 // Exists will return true if the key exists in the JSON
 func (self *Fson) Exists(path ...string) bool {
 	_, ok := self.Get(path...)

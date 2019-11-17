@@ -98,6 +98,20 @@ func TestGet(t *testing.T) {
 
 }
 
+func TestGetArray(t *testing.T) {
+	data := []byte(`{
+		"foo": [1,2,3,4],
+		"bar": "hello"
+	}`)
+	out := New(data)
+
+	if d, ok := out.GetArray("foo"); !ok {
+		t.Errorf("error getting array value")
+	} else if d[2].(float64) != 3 {
+		t.Errorf("error getting correct value from array, expecting 3 got %v", d[2].(float64))
+	}
+}
+
 func TestDel(t *testing.T) {
 	data := []byte("{\"boo\": true, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\", \"foo2\": \"bar2\"}, \"baz\": [400,2,3]}")
 	out := New(data)

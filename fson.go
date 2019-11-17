@@ -199,9 +199,8 @@ func (f *Fson) GetArray(path ...string) ([]interface{}, bool) {
 		return nil, false
 	}
 
-	switch data.(type) {
-	case []interface{}:
-		return data.([]interface{}), true
+	if d, ok := data.([]interface{}); ok {
+		return d, true
 	}
 
 	return nil, false

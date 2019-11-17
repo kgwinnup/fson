@@ -193,18 +193,18 @@ func (f *Fson) Exists(path ...string) bool {
 
 // GetArray will retrieve an array item from a specific key in the Fson object.
 // The JSON array will be returned as a slice of interface{}
-func (f *Fson) GetArray(path ...string) ([]interface{}, error) {
+func (f *Fson) GetArray(path ...string) ([]interface{}, bool) {
 	data, ok := f.Get(path...)
 	if !ok {
-		return nil, fmt.Errorf("key does not exist")
+		return nil, false
 	}
 
 	switch data.(type) {
 	case []interface{}:
-		return data.([]interface{}), nil
+		return data.([]interface{}), true
 	}
 
-	return nil, fmt.Errorf("Data fetched is not a list")
+	return nil, false
 }
 
 // FilterFn is the interface returning a boolean value of whether to include

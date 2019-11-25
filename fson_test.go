@@ -41,6 +41,17 @@ func TestGetF(t *testing.T) {
 	}
 }
 
+func TestGetString(t *testing.T) {
+	data := []byte("{\"boo\": true, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\"}, \"baz\": [400,2,3]}")
+	out := New(data)
+
+	if s, ok := out.GetString("hello"); !ok {
+		t.Errorf("error retrieving object with GetF")
+	} else if s != "world" {
+		t.Errorf("error in GetString, incorrect value")
+	}
+}
+
 func TestSet(t *testing.T) {
 	data := []byte("{\"boo\": true, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\"}, \"baz\": [400,2,3]}")
 	out := New(data)

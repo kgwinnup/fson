@@ -206,6 +206,22 @@ func (f *Fson) GetArray(path ...string) ([]interface{}, bool) {
 	return nil, false
 }
 
+// GetString will check if the key exists and if the key is a string, if so,
+// returns the (string, true), else ("", false)
+func (f *Fson) GetString(path ...string) (string, bool) {
+	data, ok := f.Get(path...)
+	if !ok {
+		return "", false
+	}
+
+	switch data.(type) {
+	case string:
+		return data.(string), true
+	default:
+		return "", false
+	}
+}
+
 // FilterFn is the interface returning a boolean value of whether to include
 // this value. This will change the JSON structure
 type FilterFn func(interface{}) bool

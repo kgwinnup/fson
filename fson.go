@@ -47,11 +47,11 @@ func (f *Fson) String() string {
 func New(b []byte) *Fson {
 	if b == nil {
 		return &Fson{make(map[string]interface{})}
-	} else {
-		f := &Fson{}
-		json.Unmarshal(b, &f.Data)
-		return f
 	}
+
+	f := &Fson{}
+	json.Unmarshal(b, &f.Data)
+	return f
 }
 
 // Loads will take nil or a []byte array and create a Fson object with it.
@@ -137,9 +137,8 @@ func (f *Fson) get(path []string, cur map[string]interface{}) interface{} {
 	if len(path) == 1 {
 		if _, ok := cur[path[0]]; ok {
 			return cur[path[0]]
-		} else {
-			return nil
 		}
+		return nil
 	}
 
 	if _, ok := cur[path[0]].(map[string]interface{}); ok {

@@ -222,6 +222,51 @@ func (f *Fson) GetString(path ...string) (string, bool) {
 	}
 }
 
+// GetInt will check if the key exists, and if the key is an integer it will return it
+func (f *Fson) GetInt(path ...string) (int, bool) {
+	data, ok := f.Get(path...)
+	if !ok {
+		return 0, false
+	}
+
+	switch data.(type) {
+	case float64:
+		return int(data.(float64)), true
+	default:
+		return 0, false
+	}
+}
+
+// GetFloat will check if the key exists, and if the key is an float64 it will return it
+func (f *Fson) GetFloat(path ...string) (float64, bool) {
+	data, ok := f.Get(path...)
+	if !ok {
+		return 0.0, false
+	}
+
+	switch data.(type) {
+	case float64:
+		return data.(float64), true
+	default:
+		return 0.0, false
+	}
+}
+
+// GetBool will check if the key exists, and if the key is an bool it will return it
+func (f *Fson) GetBool(path ...string) (bool, bool) {
+	data, ok := f.Get(path...)
+	if !ok {
+		return false, false
+	}
+
+	switch data.(type) {
+	case bool:
+		return data.(bool), true
+	default:
+		return false, false
+	}
+}
+
 // FilterFn is the interface returning a boolean value of whether to include
 // this value. This will change the JSON structure
 type FilterFn func(interface{}) bool

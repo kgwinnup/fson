@@ -41,6 +41,50 @@ func TestGetF(t *testing.T) {
 	}
 }
 
+func TestGetString(t *testing.T) {
+	data := []byte("{\"boo\": true, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\"}, \"baz\": [400,2,3]}")
+	out := New(data)
+
+	if s, ok := out.GetString("hello"); !ok {
+		t.Errorf("error retrieving object with GetF")
+	} else if s != "world" {
+		t.Errorf("error in GetString, incorrect value")
+	}
+}
+
+func TestGetInt(t *testing.T) {
+	data := []byte("{\"boo\": 10, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\"}, \"baz\": [400,2,3]}")
+	out := New(data)
+
+	if s, ok := out.GetInt("boo"); !ok {
+		t.Errorf("error retrieving object with GetInt")
+	} else if s != 10 {
+		t.Errorf("error in GetInt, incorrect value")
+	}
+}
+
+func TestGetFloat(t *testing.T) {
+	data := []byte("{\"boo\": 100.6, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\"}, \"baz\": [400,2,3]}")
+	out := New(data)
+
+	if s, ok := out.GetFloat("boo"); !ok {
+		t.Errorf("error retrieving object with GetFloat")
+	} else if s != 100.6 {
+		t.Errorf("error in GetFloat, incorrect value")
+	}
+}
+
+func TestGetBool(t *testing.T) {
+	data := []byte("{\"boo\": true, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\"}, \"baz\": [400,2,3]}")
+	out := New(data)
+
+	if s, ok := out.GetBool("boo"); !ok {
+		t.Errorf("error retrieving object with GetBool")
+	} else if s != true {
+		t.Errorf("error in GetBool, incorrect value")
+	}
+}
+
 func TestSet(t *testing.T) {
 	data := []byte("{\"boo\": true, \"hello\": \"world\", \"obj\": {\"foo\": \"bar\"}, \"baz\": [400,2,3]}")
 	out := New(data)
@@ -96,6 +140,20 @@ func TestGet(t *testing.T) {
 		t.Errorf("invalid key fetched with GetP")
 	}
 
+}
+
+func TestGetArray(t *testing.T) {
+	data := []byte(`{
+		"foo": [1,2,3,4],
+		"bar": "hello"
+	}`)
+	out := New(data)
+
+	if d, ok := out.GetArray("foo"); !ok {
+		t.Errorf("error getting array value")
+	} else if d[2].(float64) != 3 {
+		t.Errorf("error getting correct value from array, expecting 3 got %v", d[2].(float64))
+	}
 }
 
 func TestDel(t *testing.T) {

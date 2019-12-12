@@ -126,6 +126,10 @@ func (self *Fson) SetA(value interface{}, path ...string) {
 }
 
 func (self *Fson) get(path []string, cur map[string]interface{}) interface{} {
+	if len(path) == 0 {
+		return nil
+	}
+
 	if len(path) == 1 {
 		if _, ok := cur[path[0]]; ok {
 			return cur[path[0]]
@@ -133,12 +137,14 @@ func (self *Fson) get(path []string, cur map[string]interface{}) interface{} {
 			return nil
 		}
 	}
-
-	if _, ok := cur[path[0]].(map[string]interface{}); ok {
-		return self.get(path[1:], cur[path[0]].(map[string]interface{}))
-	} else {
-		return nil
+	
+	if _, ok := cur[path[0]]; ok {
+		if _, ok := cur[path[0]].(map[string]interface{}); ok {
+			return self.get(path[1:], cur[path[0]].(map[string]interface{}))
+		}
 	}
+
+	return nil
 }
 
 // Get works like set in that the path to the key is specified as a list of

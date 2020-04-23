@@ -70,12 +70,11 @@ func (f *Fson) Loads(b []byte) error {
 
 // FromFile will load a JSON object from a file
 func FromFile(path string) (*Fson, error) {
-	data, err := ioutil.ReadFile("/tmp/dat")
+	data, err := ioutil.ReadFile(path)
 	if err != nil {
-		return New(data), nil
+		return nil, err
 	}
-
-	return nil, err
+	return New(data), nil
 }
 
 // ParseJSON takes some bytes and parses it into an Fson object
@@ -144,7 +143,7 @@ func (self *Fson) get(path []string, cur map[string]interface{}) interface{} {
 		}
 		return nil
 	}
-	
+
 	if _, ok := cur[path[0]]; ok {
 		if _, ok := cur[path[0]].(map[string]interface{}); ok {
 			return self.get(path[1:], cur[path[0]].(map[string]interface{}))
